@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Clock from "./components/Clock";
 import "./App.css";
 import { useWindowDimensions } from "./hooks/useWindowDimensions";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { hoursFromTimeZone, timePeriodFromHours } from "./datetime";
 import { clockColorByPeriod } from "./theme/clockColor";
 import { useDateFromTimeZone } from "./hooks/useDateFromTimeZone";
@@ -31,8 +31,9 @@ const rgbaFromHexWithAlpha = (hex: string, alpha: number) => {
 };
 
 export const App: React.FC = () => {
-  const [timeZone1, setTimeZone1] = useState<string>("");
-  const [timeZone2, setTimeZone2] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [timeZone1, setTimeZone1] = useState<string>();
+  const [timeZone2, setTimeZone2] = useState<string>();
   const { width, height } = useWindowDimensions();
   const [size, setSize] = useState(Math.min(width, height));
   useEffect(() => {
@@ -41,9 +42,11 @@ export const App: React.FC = () => {
   useEffect(() => {
     setTimeZone1(timeZoneFromQuery("zone1", "America/New_York"));
     setTimeZone2(timeZoneFromQuery("zone2", "Asia/Tokyo"));
+    // 数秒後にローディングを解除する
+    setTimeout(() => setLoading(false), 1000);
   }, []);
-  const date1 = useDateFromTimeZone(timeZone1);
-  const date2 = useDateFromTimeZone(timeZone2);
+  const date1 = useDateFromTimeZone(timeZone1 ?? "");
+  const date2 = useDateFromTimeZone(timeZone2 ?? "");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -64,7 +67,9 @@ export const App: React.FC = () => {
     minHeight: height + 20,
     minWidth: width,
   };
-
+  if (loading) {
+    return <CircularProgress />;
+  }
   return (
     <Box className="app" style={gradientStyle}>
       <Grid container rowSpacing={2}>
