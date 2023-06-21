@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-timesync-dev-184035-authRole",
+      "UnauthRoleArn": "arn:aws:iam::981377450937:role/amplify-timesync-dev-184035-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::981377450937:role/amplify-timesync-dev-184035-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-timesync-dev-184035-deployment",
+      "UnauthRoleName": "amplify-timesync-dev-184035-unauthRole",
+      "StackName": "amplify-timesync-dev-184035",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:981377450937:stack/amplify-timesync-dev-184035/82bca190-0f4e-11ee-aad4-0e7b3d737ad1",
+      "AmplifyAppId": "dabqmtezam7rf"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dabqmtezam7rf",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
