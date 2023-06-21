@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import Clock from "./components/Clock";
 import "./App.css";
 import { useWindowDimensions } from "./hooks/useWindowDimensions";
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
-import { hoursFromTimeZone, timePeriodFromHours } from "./datetime";
+import { Box, Grid, Stack } from "@mui/material";
+import { timePeriodFromHours } from "./datetime";
 import { clockColorByPeriod } from "./theme/clockColor";
 import { useDateFromTimeZone } from "./hooks/useDateFromTimeZone";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { LoadingCard } from "./components/LoadingCard";
 
 const timeZoneFromQuery = (queryName: string, defaultTimeZone: string) => {
   const search = window.location.search;
@@ -32,6 +33,7 @@ const rgbaFromHexWithAlpha = (hex: string, alpha: number) => {
 
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [hideApp, setHideApp] = useState(true); // for loading animation
   const [timeZone1, setTimeZone1] = useState<string>();
   const [timeZone2, setTimeZone2] = useState<string>();
   const { width, height } = useWindowDimensions();
@@ -42,8 +44,10 @@ export const App: React.FC = () => {
   useEffect(() => {
     setTimeZone1(timeZoneFromQuery("zone1", "America/New_York"));
     setTimeZone2(timeZoneFromQuery("zone2", "Asia/Tokyo"));
+    // 数秒後にアプリを表示する
+    setTimeout(() => setHideApp(false), 1000);
     // 数秒後にローディングを解除する
-    setTimeout(() => setLoading(false), 1000);
+    setTimeout(() => setLoading(false), 2000);
   }, []);
   const date1 = useDateFromTimeZone(timeZone1 ?? "");
   const date2 = useDateFromTimeZone(timeZone2 ?? "");
@@ -61,41 +65,45 @@ export const App: React.FC = () => {
   const rgba2 = rgbaFromHexWithAlpha(color2, 0.5);
 
   const gradientStyle = {
-    background: `linear-gradient(to ${
-      matches ? "right" : "bottom"
-    }, ${rgba1}, ${rgba2})`,
+    background: hideApp
+      ? "#f8c3d1"
+      : `linear-gradient(to ${
+          matches ? "right" : "bottom"
+        }, ${rgba1}, ${rgba2})`,
     minHeight: height + 20,
     minWidth: width,
   };
-  if (loading) {
-    return <CircularProgress />;
-  }
   return (
     <Box className="app" style={gradientStyle}>
-      <Grid container rowSpacing={2}>
-        {timeZone1 && (
-          <Grid item xs={12} sm={6}>
-            <Box className="clock">
-              <Clock
-                date={date1 ?? new Date()}
-                timeZoneName={timeZone1}
-                size={size}
-              />
-            </Box>
-          </Grid>
-        )}
-        {timeZone2 && (
-          <Grid item xs={12} sm={6}>
-            <Box className="clock">
-              <Clock
-                date={date2 ?? new Date()}
-                timeZoneName={timeZone2}
-                size={size}
-              />
-            </Box>
-          </Grid>
-        )}
-      </Grid>
+      {loading ? <LoadingCard /> : <></>}
+      {hideApp ? (
+        <></>
+      ) : (
+        <Grid container rowSpacing={2}>
+          {timeZone1 && (
+            <Grid item xs={12} sm={6}>
+              <Box className="clock">
+                <Clock
+                  date={date1 ?? new Date()}
+                  timeZoneName={timeZone1}
+                  size={size}
+                />
+              </Box>
+            </Grid>
+          )}
+          {timeZone2 && (
+            <Grid item xs={12} sm={6}>
+              <Box className="clock">
+                <Clock
+                  date={date2 ?? new Date()}
+                  timeZoneName={timeZone2}
+                  size={size}
+                />
+              </Box>
+            </Grid>
+          )}
+        </Grid>
+      )}
     </Box>
   );
 };
